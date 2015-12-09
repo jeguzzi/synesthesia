@@ -1,6 +1,6 @@
 import random
 import gevent
-from sim import set_led
+from sim_led import set_led
 from sim import get_human_pose
 from sim import get_robot_pose, get_robot_speed, get_robot_distance
 from math import sin, pi

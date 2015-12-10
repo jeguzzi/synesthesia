@@ -4,11 +4,12 @@ import time
 
 
 class VREP(object):
-    """docstring for VREP"""
+    """VREP wraps some of vrep external API"""
 
     def __init__(self, port):
         super(VREP, self).__init__()
-        # Add simExtRemoteApiStart(<port>) to the init script of VREP
+        # Add simExtRemoteApiStart(<port>) to an init script of VREP
+        # subscribe our client
         self.id = vrep.simxStart('127.0.0.1', port, True, False, 5000, 5)
         self._handle = {}
         self._p = []
@@ -16,9 +17,11 @@ class VREP(object):
         self._s = []
 
     def __del__(self):
+        # unsubscribe our client
         vrep.simxFinish(self.id)
 
     def get_handle(self, name):
+        """Maps name to int (objects handles)"""
         if name in self._handle:
             return self._handle[name]
 
@@ -31,6 +34,7 @@ class VREP(object):
             raise NameError('Handle not found %s' % r)
 
     def get_object_pose(self, name):
+        """Get an (x,y,theta) pose for object with name <name>"""
         handle = self.get_handle(name)
 
         if handle not in self._p:
@@ -52,6 +56,7 @@ class VREP(object):
         return (position[0], position[1], orientation[2])
 
     def get_object_velocity(self, name):
+        """Get an (x,y) velocity for object with name <name>"""
         handle = self.get_handle(name)
         if handle not in self._v:
             vrep.simxGetObjectVelocity(
@@ -67,6 +72,7 @@ class VREP(object):
         return lin[:2]
 
     def get_distance_sensor(self, name):
+        """Get the distance read by the sensor with name <name>."""
         handle = self.get_handle(name)
         if handle not in self._s:
             vrep.simxReadProximitySensor(
@@ -86,11 +92,13 @@ _default_robot = 'bubbleRob'
 
 
 def cleanup():
+    # Please call this function every the module is reloaded"
     global _vrep
     del _vrep
 
 
 def get_robot_speed(robot=None):
+    """The robot linear speed"""
     if robot is None:
         robot = _default_robot
     lin = _vrep.get_object_velocity(robot)
@@ -98,18 +106,21 @@ def get_robot_speed(robot=None):
 
 
 def get_robot_pose(robot=None):
+    """The robot (x,y,theta) pose"""
     if robot is None:
         robot = _default_robot
     return _vrep.get_object_pose(robot)
 
 
 def get_human_pose(human=None):
+    """The human (x,y,theta) pose"""
     if human is None:
         human = _default_human
     return _vrep.get_object_pose(human)
 
 
 def get_robot_distance(robot=None, prox='sensingNose'):
+    """The robot proximity sensor distance reading"""
     if robot is None:
         robot = _default_robot
     return _vrep.get_distance_sensor(prox)

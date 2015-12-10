@@ -1,10 +1,13 @@
 <h1>Simulated Led Strip</h1>
 
-<svg width='200' height='700'>
-   <g>
-      <rect width='1.4cm' height='30cm' fill='grey' stroke='black' stroke-width='0.1cm'/>
-      {% for l in range(1,11) %}
-      <circle id="{{l}}" cx="0.7cm" cy="{{'%s' % (0.7+l*1.4)}}cm" r="0.5cm" fill="rgb(100,100,100)" stroke="white"/>
+<svg width="5cm" height="16cm" viewBox="0 0 5 16">
+   <g transform="translate(2,0.1)">
+      <rect width='1.4' height='15' fill='lightgrey' stroke='grey' stroke-width='0.1'/>
+      {% for l in range(1,21) %}
+      <g transform="translate(0,{{l*0.7}})">
+         <rect x="0.45" y="-0.05" width='0.5' height='0.5' fill='snow'/>
+         <circle id="{{l}}" cx="0.7" cy="0.2" r="0.2" fill="rgb(100,100,100)" stroke="grey" stroke-width='0.02'/>
+      </g>
       {% endfor %}
    </g>
 </svg>

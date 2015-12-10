@@ -1,8 +1,9 @@
 import random
 import gevent
 from sim_led import set_led
-from sim import get_human_pose
-from sim import get_robot_pose, get_robot_speed, get_robot_distance
+from sim_vrep import get_human_pose
+from sim_vrep import get_robot_pose, get_robot_speed, get_robot_distance
+from sim_vrep import cleanup
 from math import sin, pi
 
 
@@ -24,9 +25,12 @@ def set_random_leds():
 
 def set_leds(robot_pose, robot_speed, robot_distance, human_pose):
     x, y, theta = robot_pose
+    # prendo tutti i dati e li trasformo in led
+    
     set_led(0, [int(x*100), 0, 0])
     set_led(1, [0, int(y*100), 0])
     set_led(2, [0, 0, int(theta*100)])
+    set_led(3, [0, 0, int(robot_distance*100)])
 
 
 def update(t):
@@ -38,6 +42,7 @@ def update(t):
     # print 'Newest pose and distance', pose, distance
     # set_random_leds()
     # set_wave_leds(t)
+
     set_leds(robot_pose, robot_speed, robot_distance, human_pose)
 
 
@@ -56,4 +61,9 @@ def run():
 
 
 if __name__ == '__main__':
-    start()
+    try:
+        start()
+    except:
+        pass
+    finally:
+        cleanup()

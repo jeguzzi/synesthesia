@@ -13,10 +13,28 @@
 </svg>
 
 <script type="text/javascript">
-var evtSrc = new EventSource("{{url_for('sse')}}");
-evtSrc.onmessage = function(e)
+
+function set_led(id, data)
 {
-   var node=document.getElementById(e.lastEventId);
-   if(node) node.setAttribute('fill',e.data);
+   var node=document.getElementById(id);
+   if(node) node.setAttribute('fill',data);
 }
+
+function set_led_in_e(e)
+{
+   set_led(e.lastEventId, e.data)
+}
+
+function set_leds_in_e(e)
+{
+   values = eval(e.data)
+   i0 = Number(e.lastEventId)
+   for (var i = 0; i < values.length; i++) {
+      set_led(String(i0+i), values[i])
+   }
+}
+
+var evtSrc = new EventSource("{{url_for('sse')}}");
+evtSrc.onmessage = set_leds_in_e
+
 </script>
